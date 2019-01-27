@@ -22,10 +22,8 @@ public class AddEventWindow extends JFrame implements ActionListener {
         init();
     }
 
-    public AddEventWindow(CalendarController controller, Date d) {
+    public AddEventWindow(CalendarController controller, Calendar c) {
         this(controller);
-        Calendar c = Calendar.getInstance();
-        c.setTime(d);
         mon.setSelectedIndex(c.get(Calendar.MONTH) + 1);
         day.setSelectedIndex(c.get(Calendar.DAY_OF_MONTH));
         yr.setSelectedItem(c.get(Calendar.YEAR) + "");
@@ -223,16 +221,15 @@ public class AddEventWindow extends JFrame implements ActionListener {
         return interval.getSelectedIndex();
     }
 
-    public Date getEventDate() {
+    public Calendar getEventDate() {
         int m = mon.getSelectedIndex();
         int y = Integer.parseInt((String)yr.getSelectedItem());
         int d = day.getSelectedIndex();
         Calendar c = Calendar.getInstance();
         c.set(y, m - 1, d, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
-        Date date = c.getTime();
         if (c.get(Calendar.MONTH) == m - 1 && c.get(Calendar.YEAR) == y && c.get(Calendar.DAY_OF_MONTH) == d)
-            return date;
+            return c;
         else
             return null;
     }
@@ -268,8 +265,7 @@ public class AddEventWindow extends JFrame implements ActionListener {
                 controller.closeAddEventWindow();
                 return;
             }
-            Date d = getEventDate();
-            System.out.println(d);
+            Calendar d = getEventDate();
             if (d != null)
                 controller.addEvent(getEventDate(), getEventName(), getEventColor(), getEventInterval());
             else

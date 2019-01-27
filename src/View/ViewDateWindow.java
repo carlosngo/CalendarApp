@@ -20,7 +20,7 @@ import javax.swing.*;
  */
 public class ViewDateWindow extends JFrame {
 
-    private Date date;
+    private Calendar date;
 
     // SWING COMPONENTS
     private CalendarController controller;
@@ -32,7 +32,7 @@ public class ViewDateWindow extends JFrame {
     //ArrayList<String> test_events;
     //String test_date;
 
-    public ViewDateWindow(CalendarController controller, Date date, ArrayList<String> eventNames, ArrayList<Color> eventColors, Point pt) {
+    public ViewDateWindow(CalendarController controller, Calendar date, ArrayList<String> eventNames, ArrayList<Color> eventColors, Point pt) {
         this.controller = controller;
         this.date = date;
         JPanel p = new JPanel();
@@ -43,7 +43,7 @@ public class ViewDateWindow extends JFrame {
 //        p.setBackground(new Color(11,102,35));
 
         DateFormat df = new SimpleDateFormat("EEEE, MM/dd/yyyy");
-        String reportDate = df.format(date);
+        String reportDate = df.format(date.getTime());
         dateLabel = new JLabel(reportDate);
         dateLabel.setFont(new Font("Arial", Font.BOLD, 14));
 

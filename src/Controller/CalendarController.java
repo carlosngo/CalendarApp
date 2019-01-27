@@ -1,6 +1,5 @@
 package Controller;
 
-import Model.*;
 import Model.Event;
 import View.*;
 
@@ -14,7 +13,7 @@ public class CalendarController {
     private CalendarWindow cv;
     private AddEventWindow aev;
     private ViewDateWindow dv;
-    private TreeMap<Date, TreeSet<Model.Event>> events;
+    private TreeMap<Calendar, TreeSet<Model.Event>> events;
     private EventIO io;
 
     public CalendarController() {
@@ -27,11 +26,11 @@ public class CalendarController {
         aev = new AddEventWindow(this);
     }
 
-    public void openAddEventWindow(Date d) {
+    public void openAddEventWindow(Calendar d) {
         aev = new AddEventWindow(this, d);
     }
 
-    public void openViewDateWindow(Date d, Point p) {
+    public void openViewDateWindow(Calendar d, Point p) {
         dv = new ViewDateWindow(this, d, getEventNames(d), getEventColors(d), p);
     }
 
@@ -47,7 +46,7 @@ public class CalendarController {
             if (extension.equals(".csv")) {
                 ArrayList<Model.Event> list = io.importCSV(file);
                 for (Model.Event ev : list) {
-                    Date d = ev.getDate();
+                    Calendar d = ev.getDate();
                     if (events.containsKey(d)) {
                         events.get(d).add(ev);
                         for (Model.Event meh : events.get(d)) {
@@ -62,7 +61,7 @@ public class CalendarController {
             } else if (extension.equals(".psv")) {
                 ArrayList<Model.Event> list = io.importPSV(file);
                 for (Model.Event ev : list) {
-                    Date d = ev.getDate();
+                    Calendar d = ev.getDate();
                     if (events.containsKey(d)) {
                         events.get(d).add(ev);
                     } else {
@@ -91,7 +90,7 @@ public class CalendarController {
         }
     }
 
-    public ArrayList<String> getEventNames(Date d) {
+    public ArrayList<String> getEventNames(Calendar d) {
         ArrayList<String> names = new ArrayList<>();
         if (events.containsKey(d)) {
             for (Model.Event e : events.get(d)) {
@@ -101,7 +100,7 @@ public class CalendarController {
         return names;
     }
 
-    public ArrayList<Color> getEventColors(Date d) {
+    public ArrayList<Color> getEventColors(Calendar d) {
         ArrayList<Color> colors = new ArrayList<>();
         if (events.containsKey(d)) {
             for (Model.Event e : events.get(d)) {
@@ -111,7 +110,7 @@ public class CalendarController {
         return colors;
     }
 
-    public void addEvent(Date d, Event e) {
+    public void addEvent(Calendar d, Event e) {
         if (!events.containsKey(d)) {
             TreeSet<Model.Event> set = new TreeSet<>();
             set.add(e);
@@ -121,47 +120,36 @@ public class CalendarController {
         }
     }
 
-    public void addEvent(Date date, String name, Color color, int interval) {
-        Model.Event ev = new Model.Event(date, name, color);
-        addEvent(date, ev);
+    public void addEvent(Calendar c, String name, Color color, int interval) {
+        Model.Event ev = new Model.Event(c, name, color);
+        addEvent(c, ev);
         switch (interval) {
             case Event.WEEKLY_EVENT:
-                Calendar c = Calendar.getInstance();
-                c.setTime(date);
                 while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
                     c.add(Calendar.WEEK_OF_YEAR, 1);
-                    Date newDate = c.getTime();
-                    Model.Event repeatedEvent = new Model.Event(newDate, name, color);
-                    addEvent(newDate, repeatedEvent);
+                    Model.Event repeatedEvent = new Model.Event(c, name, color);
+                    addEvent(c, repeatedEvent);
                 }
                 break;
             case Event.BIWEEKLY_EVENT:
-                c = Calendar.getInstance();
-                c.setTime(date);
                 while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
                     c.add(Calendar.WEEK_OF_YEAR, 2);
-                    Date newDate = c.getTime();
-                    Model.Event repeatedEvent = new Model.Event(newDate, name, color);
-                    addEvent(newDate, repeatedEvent);
+                    Model.Event repeatedEvent = new Model.Event(c, name, color);
+                    addEvent(c, repeatedEvent);
                 }
                 break;
             case Event.YEARLY_EVENT:
-                c = Calendar.getInstance();
-                c.setTime(date);
                 while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
                     c.add(Calendar.YEAR, 1);
                     Date newDate = c.getTime();
-                    Model.Event repeatedEvent = new Model.Event(newDate, name, color);
-                    addEvent(newDate, repeatedEvent);
+                    Model.Event repeatedEvent = new Model.Event(c, name, color);
+                    addEvent(c, repeatedEvent);
                 }
                 break;
         }
         cv.refreshCalendar(cv.monthToday, cv.yearToday);
     }
 
-    public void removeEvent(Date d, Event e) {
-        events.get(d).remove(e);
-    }
 
     public void closeViewDateWindow() {
         dv.dispose();

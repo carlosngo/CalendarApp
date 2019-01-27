@@ -63,9 +63,8 @@ public class CalendarWindow {
             Calendar c = Calendar.getInstance();
             c.set(year, month, i, 0, 0, 0);
             c.set(Calendar.MILLISECOND, 0);
-            Date d = c.getTime();
-            ArrayList<String> eventNames = controller.getEventNames(d);
-            ArrayList<Color> eventColors = controller.getEventColors(d);
+            ArrayList<String> eventNames = controller.getEventNames(c);
+            ArrayList<Color> eventColors = controller.getEventColors(c);
             StringBuilder sb = new StringBuilder();
             sb.append("<html>" + i + " <br/>");
 //            CustomPanel pane = new CustomPanel(i + "", 3);
@@ -246,7 +245,7 @@ public class CalendarWindow {
 //                        p.translate(currentCell.x, currentCell.y);
                         Point frmPt = frmMain.getLocation();
                         Point pt = new Point(frmPt.x + neighborCell.x + 22, frmPt.y + neighborCell.y + 70);
-                        controller.openViewDateWindow(c.getTime(), pt);
+                        controller.openViewDateWindow(c, pt);
                     }
                 } else {
                     if (controller.isAddEventWindowOpen()) controller.closeAddEventWindow();

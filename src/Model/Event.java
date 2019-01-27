@@ -18,21 +18,21 @@ public class Event implements Comparable<Event> {
     public static final int WEEKLY_EVENT = 1;
     public static final int BIWEEKLY_EVENT = 2;
     public static final int YEARLY_EVENT = 3;
-    private Date date;
+    private Calendar date;
     private String name;
     private Color color;
 
-    public Event(Date date, String name, Color color) {
+    public Event(Calendar date, String name, Color color) {
         this.date = date;
         this.name = name;
         this.color = color;
     }
 
-    public Date getDate() {
+    public Calendar getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Calendar date) {
         this.date = date;
     }
 
@@ -68,29 +68,4 @@ public class Event implements Comparable<Event> {
             return name.compareTo(e.getName());
         }
     }
-
-//    public static void main(String[] args) {
-//        int month = 1;
-//        int year = 2018;
-//        int day = 20;
-//        java.util.Calendar c = Calendar.getInstance();
-//        c.set(year, month - 1, day, 0, 0, 0);
-//        Date d1 = c.getTime();
-//        Date d2 = c.getTime();
-//        TreeMap<Date, TreeSet<Event>> calendar = new TreeMap<>();
-//        TreeSet<Event> events = new TreeSet<>();
-//        Event e1 = new Event(d1, "CCS Day", new Color(255, 0, 0));
-//        Event e2 = new Event(d2, "CCS Day", new Color(255, 0, 0));
-//        events.add(e1);
-//        calendar.put(d1, events);
-//        System.out.println("Does the calendar have the key? " + calendar.containsKey(d2));
-////        events.
-//        events.add(e2);
-//        for (Event e : events) {
-//            System.out.println(e.toString());
-//        }
-//        System.out.println("Is d1 equal to d2? " + d1.compareTo(d2));
-//        System.out.println(e1.compareTo(e2));
-//
-//    }
 }
