@@ -22,9 +22,13 @@ public class EventIO {
                 int month = c.get(Calendar.MONTH) + 1;
                 int year = c.get(Calendar.YEAR);
                 int day = c.get(Calendar.DAY_OF_MONTH);
+                int hour = c.get(Calendar.HOUR);
+                int minutes = c.get(Calendar.MINUTE);
+                int seconds = c.get(Calendar.SECOND);
+
                 for (Event event : events.get(d)) {
                     StringBuilder sb = new StringBuilder();
-                    sb.append(month + "/" + day + "/" + year);
+                    sb.append(month + "/" + day + "/" + year + "/" + hour + ":" + minutes + ":" + seconds);
                     sb.append(",");
                     sb.append(event.getName());
                     sb.append(",");
@@ -87,6 +91,7 @@ public class EventIO {
                 int day = Integer.parseInt(dateFormat[1].trim());
                 Calendar c = Calendar.getInstance();
                 c.set(year, month - 1, day, 0, 0, 0);
+                c.set(Calendar.MILLISECOND, 0);
                 Date date = c.getTime();
                 String name = fields[1].trim();
                 Color color;
@@ -129,7 +134,8 @@ public class EventIO {
                 int year = Integer.parseInt(dateFormat[2].trim());
                 int day = Integer.parseInt(dateFormat[1].trim());
                 Calendar c = Calendar.getInstance();
-                c.set(year, month, day, 0, 0, 0);
+                c.set(year, month - 1, day, 0, 0, 0);
+                c.set(Calendar.MILLISECOND, 0);
                 Date date = c.getTime();
                 String name = fields[0].trim();
                 Color color;
