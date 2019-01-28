@@ -2,16 +2,21 @@ package View;
 
 import Controller.*;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 //import java.awt.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.Calendar;
-
 
 public class CalendarWindow {
     public int yearBound, monthBound, dayBound, yearToday, monthToday;
@@ -19,7 +24,7 @@ public class CalendarWindow {
 
     /**** Swing Components ****/
     public JLabel monthLabel, yearLabel;
-    public JButton btnPrev, btnNext, btnAdd, btnImport, btnExport;
+    public JButton btnPrev, btnNext, btnAdd, btnImport, btnExport, btnFB, btnSMS;
     public JComboBox cmbYear;
     public JFrame frmMain;
     public Container pane;
@@ -205,15 +210,45 @@ public class CalendarWindow {
         btnNext = new JButton (">>");
 //        btnAdd = new JButton ("<html><font color='white'>+ New Event</font></html>");
         btnAdd = new JButton("+ New Event");
-        btnAdd.setFont(new Font("Arial", Font.BOLD, 11));
+        btnAdd.setFont(new Font("Arial", Font.BOLD, 14));
 //        btnAdd.setBackground(Color.BLUE);
 //        btnAdd.setForeground(Color.WHITE);
         btnAdd.setOpaque(true);
         btnAdd.setBorderPainted(false);
-        btnExport = new JButton ("Export Events");
-        btnExport.setFont(new Font("Arial", Font.PLAIN, 11));
-        btnImport = new JButton ("Import Events");
-        btnImport.setFont(new Font("Arial", Font.PLAIN, 11));
+        btnExport = new JButton ("");
+        btnExport.setOpaque(false);
+        btnExport.setContentAreaFilled(false);
+        btnExport.setBorderPainted(false);
+        btnImport = new JButton ("");
+        btnImport.setOpaque(false);
+        btnImport.setContentAreaFilled(false);
+        btnImport.setBorderPainted(false);
+        btnFB = new JButton("");
+        btnFB.setOpaque(false);
+        btnFB.setContentAreaFilled(false);
+        btnFB.setBorderPainted(false);
+        btnSMS = new JButton("");
+        btnSMS.setOpaque(false);
+        btnSMS.setContentAreaFilled(false);
+        btnSMS.setBorderPainted(false);
+        try {
+            URL resource = getClass().getClassLoader().getResource("export.png");
+            File img = Paths.get(resource.toURI()).toFile();
+            btnExport.setIcon(new ImageIcon(resizeImage(img, 20, 30)));
+            resource = getClass().getClassLoader().getResource("import.png");
+            img = Paths.get(resource.toURI()).toFile();
+            btnImport.setIcon(new ImageIcon(resizeImage(img, 20, 30)));
+            resource = getClass().getClassLoader().getResource("fb.png");
+            img = Paths.get(resource.toURI()).toFile();
+            btnFB.setIcon(new ImageIcon(resizeImage(img, 25, 25)));
+            resource = getClass().getClassLoader().getResource("sms.png");
+            img = Paths.get(resource.toURI()).toFile();
+            btnSMS.setIcon(new ImageIcon(resizeImage(img, 30, 30)));
+
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
 
         modelCalendarTable = new DefaultTableModel()
         {
@@ -241,10 +276,12 @@ public class CalendarWindow {
                         if (controller.isAddEventWindowOpen()) controller.closeAddEventWindow();
                         if (controller.isViewDateWindowOpen()) controller.closeViewDateWindow();
                     } else {
-                        Rectangle neighborCell = calendarTable.getCellRect(row + 1, col + 1, true);
+                        Rectangle neighborCell = calendarTable.getCellRect(row + 2, col + 1, true);
 //                        p.translate(currentCell.x, currentCell.y);
                         Point frmPt = frmMain.getLocation();
-                        Point pt = new Point(frmPt.x + neighborCell.x + 22, frmPt.y + neighborCell.y + 70);
+                        Point tblPt = calendarTable.getLocation();
+//                        Point pt = new Point(frmPt.x + neighborCell.x + 22, frmPt.y + neighborCell.y + 70);
+                        Point pt = new Point(frmPt.x + neighborCell.x + tblPt.x, frmPt.y + neighborCell.y + tblPt.y);
                         controller.openViewDateWindow(c, pt);
                     }
                 } else {
@@ -264,7 +301,10 @@ public class CalendarWindow {
         btnImport.addActionListener(new btnImport_Action());
         btnExport.addActionListener(new btnExport_Action());
         btnAdd.addActionListener(new btnAdd_Action());
+        btnFB.addActionListener(new btnFB_Action());
+        btnSMS.addActionListener(new btnSMS_Action());
 
+        ((JLabel)cmbYear.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
         cmbYear.addActionListener(new cmbYear_Action());
 
         pane.add(calendarPanel);
@@ -276,6 +316,8 @@ public class CalendarWindow {
         calendarPanel.add(btnAdd);
         calendarPanel.add(btnImport);
         calendarPanel.add(btnExport);
+        calendarPanel.add(btnFB);
+        calendarPanel.add(btnSMS);
         calendarPanel.add(scrollCalendarTable);
         calendarPanel.addMouseListener(new MouseAdapter() {
             @Override
@@ -287,13 +329,15 @@ public class CalendarWindow {
 
         calendarPanel.setBounds(0, 0, 640, 670);
         monthLabel.setBounds(320-monthLabel.getPreferredSize().width/2, 50, 200, 50);
-        yearLabel.setBounds(375, 610, 85, 40);
-        cmbYear.setBounds(460, 610, 160, 40);
+        yearLabel.setBounds(465, 610, 85, 40);
+        cmbYear.setBounds(540, 610, 80, 40);
         btnPrev.setBounds(20, 50, 100, 50);
         btnNext.setBounds(520, 50, 100, 50);
-        btnAdd.setBounds(20, 610, 100, 40);
-        btnImport.setBounds(140, 610, 100, 40);
-        btnExport.setBounds(260, 610, 100, 40);
+        btnAdd.setBounds(20, 610, 130, 40);
+        btnImport.setBounds(170, 610, 40, 40);
+        btnExport.setBounds(210, 610, 40, 40);
+        btnFB.setBounds(270, 610, 40, 40);
+        btnSMS.setBounds(320, 610, 40, 40);
         scrollCalendarTable.setBounds(20, 100, 600, 500);
 
         frmMain.setResizable(false);
@@ -379,11 +423,27 @@ public class CalendarWindow {
             refreshCalendar(monthToday, yearToday);
         }
     }
+
     class btnExport_Action implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             controller.exportEvents();
         }
     }
+
+    class btnFB_Action implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            controller.openFBWindow();
+        }
+    }
+
+    class btnSMS_Action implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            controller.openSMSWindow();
+        }
+    }
+
     class cmbYear_Action implements ActionListener
     {
         public void actionPerformed (ActionEvent e)
@@ -396,4 +456,21 @@ public class CalendarWindow {
             }
         }
     }
+
+    public static BufferedImage resizeImage(File img, int width, int height) {
+        try{
+            BufferedImage rawHolder = ImageIO.read(img);
+            Image raw = rawHolder.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = resized.createGraphics();
+            g2d.drawImage(raw, 0, 0, null);
+            g2d.dispose();
+            return resized;
+        }
+        catch(IOException e){
+            System.out.println("File not found.");
+            return null;
+        }
+    }
+
 }

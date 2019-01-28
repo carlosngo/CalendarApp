@@ -34,8 +34,19 @@ public class CalendarController {
         dv = new ViewDateWindow(this, d, getEventNames(d), getEventColors(d), p);
     }
 
+    public void openFBWindow() {
+        NotificationHandler nh = new NotificationHandler(this, new FBWindow());
+        new Thread(nh).start();
+    }
+
+    public void openSMSWindow() {
+        NotificationHandler nh = new NotificationHandler(this, new SMSWindow());
+        new Thread(nh).start();
+    }
+
     public void importEvents() {
         JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Import Events");
         chooser.addChoosableFileFilter(new FileNameExtensionFilter(
                 "PSV / CSV File", "csv", "psv"));
         int returnVal = chooser.showOpenDialog(null);
@@ -75,6 +86,7 @@ public class CalendarController {
     }
     public void exportEvents() {
         JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Export Events");
         chooser.addChoosableFileFilter(new FileNameExtensionFilter(
                 "PSV / CSV File", "csv", "psv"));
         int returnVal = chooser.showOpenDialog(null);
@@ -88,6 +100,11 @@ public class CalendarController {
                 io.exportPSV(file, events);
             }
         }
+    }
+
+    public TreeSet<Event> getEvents(Calendar d) {
+//        System.out.println("Notifier requested: " + d.getTime());
+        return events.get(d);
     }
 
     public ArrayList<String> getEventNames(Calendar d) {
@@ -120,30 +137,32 @@ public class CalendarController {
         }
     }
 
-    public void addEvent(Calendar c, String name, Color color, int interval) {
+    public void addEvent(Calendar d, String name, Color color, int interval) {
+        Calendar c = (Calendar)d.clone();
+
         Model.Event ev = new Model.Event(c, name, color);
-        addEvent(c, ev);
+        addEvent((Calendar) c.clone(), ev);
         switch (interval) {
             case Event.WEEKLY_EVENT:
                 while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
                     c.add(Calendar.WEEK_OF_YEAR, 1);
-                    Model.Event repeatedEvent = new Model.Event(c, name, color);
-                    addEvent(c, repeatedEvent);
+//                    System.out.println(c.getTime());
+                    Model.Event repeatedEvent = new Model.Event((Calendar)c.clone(), name, color);
+                    addEvent((Calendar)c.clone(), repeatedEvent);
                 }
                 break;
             case Event.BIWEEKLY_EVENT:
                 while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
                     c.add(Calendar.WEEK_OF_YEAR, 2);
-                    Model.Event repeatedEvent = new Model.Event(c, name, color);
-                    addEvent(c, repeatedEvent);
+                    Model.Event repeatedEvent = new Model.Event((Calendar)c.clone(), name, color);
+                    addEvent((Calendar)c.clone(), repeatedEvent);
                 }
                 break;
             case Event.YEARLY_EVENT:
                 while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
                     c.add(Calendar.YEAR, 1);
-                    Date newDate = c.getTime();
-                    Model.Event repeatedEvent = new Model.Event(c, name, color);
-                    addEvent(c, repeatedEvent);
+                    Model.Event repeatedEvent = new Model.Event((Calendar)c.clone(), name, color);
+                    addEvent((Calendar)c.clone(), repeatedEvent);
                 }
                 break;
         }

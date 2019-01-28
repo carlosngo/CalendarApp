@@ -25,7 +25,6 @@ public class ViewDateWindow extends JFrame {
     // SWING COMPONENTS
     private CalendarController controller;
     private JLabel dateLabel;
-    private CustomPanel cp;
     private JScrollPane sp;
     private JButton addEvent;
     private JLabel eventArea;
