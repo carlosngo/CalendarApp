@@ -35,13 +35,11 @@ public class CalendarController {
     }
 
     public void openFBWindow() {
-        NotificationHandler nh = new NotificationHandler(this, new FBWindow());
-        new Thread(nh).start();
+        new Thread(new NotificationHandler(this, new FBWindow())).start();
     }
 
     public void openSMSWindow() {
-        NotificationHandler nh = new NotificationHandler(this, new SMSWindow());
-        new Thread(nh).start();
+        new Thread(new NotificationHandler(this, new SMSWindow())).start();
     }
 
     public void importEvents() {
@@ -140,7 +138,7 @@ public class CalendarController {
     public void addEvent(Calendar d, String name, Color color, int interval) {
         Calendar c = (Calendar)d.clone();
 
-        Model.Event ev = new Model.Event(c, name, color);
+        Model.Event ev = new Model.Event((Calendar) c.clone(), name, color);
         addEvent((Calendar) c.clone(), ev);
         switch (interval) {
             case Event.WEEKLY_EVENT:
