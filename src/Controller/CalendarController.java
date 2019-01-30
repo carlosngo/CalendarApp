@@ -4,6 +4,9 @@ import Model.Event;
 import View.*;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
 import javax.swing.*;
 import java.awt.*;
@@ -15,11 +18,17 @@ public class CalendarController {
     private ViewDateWindow dv;
     private TreeMap<Calendar, TreeSet<Model.Event>> events;
     private EventIO io;
+    private NotificationController no;
 
     public CalendarController() {
         events = new TreeMap<>();
         io = new EventIO();
+        loadEvents();
         cv = new CalendarWindow(this);
+        no = new NotificationController(this);
+        openFBWindow();
+        openSMSWindow();
+
     }
 
     public void openAddEventWindow() {
@@ -30,16 +39,20 @@ public class CalendarController {
         aev = new AddEventWindow(this, d);
     }
 
+    public void openAddEventWindow(Calendar d, String name, Color c) { aev = new AddEventWindow(this, d, name, c); }
+
     public void openViewDateWindow(Calendar d, Point p) {
         dv = new ViewDateWindow(this, d, getEventNames(d), getEventColors(d), p);
     }
 
     public void openFBWindow() {
-        new Thread(new NotificationHandler(this, new FBWindow())).start();
+        no.addSubject(new FBWindow());
+//        new Thread(new NotificationHandler(this, new FBWindow())).start();
     }
 
     public void openSMSWindow() {
-        new Thread(new NotificationHandler(this, new SMSWindow())).start();
+        no.addSubject(new SMSWindow());
+//        new Thread(new NotificationHandler(this, new SMSWindow())).start();
     }
 
     public void importEvents() {
@@ -53,35 +66,38 @@ public class CalendarController {
             String filename = file.getName();
             String extension = filename.substring(filename.lastIndexOf('.'), filename.length());
             if (extension.equals(".csv")) {
-                ArrayList<Model.Event> list = io.importCSV(file);
-                for (Model.Event ev : list) {
-                    Calendar d = ev.getDate();
-                    if (events.containsKey(d)) {
-                        events.get(d).add(ev);
-                        for (Model.Event meh : events.get(d)) {
-                            System.out.println(meh.getName());
-                        }
-                    } else {
-                        TreeSet<Model.Event> toAdd = new TreeSet<>();
-                        toAdd.add(ev);
-                        events.put(d, toAdd);
-                    }
-                }
+                io.setStrategy(new CSVReader());
+                io.executeStrategy(file, events);
             } else if (extension.equals(".psv")) {
-                ArrayList<Model.Event> list = io.importPSV(file);
-                for (Model.Event ev : list) {
-                    Calendar d = ev.getDate();
-                    if (events.containsKey(d)) {
-                        events.get(d).add(ev);
-                    } else {
-                        TreeSet<Model.Event> toAdd = new TreeSet<>();
-                        toAdd.add(ev);
-                        events.put(d, toAdd);
-                    }
-                }
+                io.setStrategy(new PSVReader());
+                io.executeStrategy(file, events);
             }
         }
     }
+
+    public void saveEvents() {
+        try {
+            URL resource = getClass().getClassLoader().getResource("events.csv");
+            File csv = Paths.get(resource.toURI()).toFile();
+            io.setStrategy(new CSVWriter());
+            io.executeStrategy(csv, events);
+//            io.exportCSV(csv, events);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadEvents() {
+        try {
+            URL resource = getClass().getClassLoader().getResource("events.csv");
+            File csv = Paths.get(resource.toURI()).toFile();
+            io.setStrategy(new CSVReader());
+            io.executeStrategy(csv, events);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void exportEvents() {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Export Events");
@@ -93,15 +109,16 @@ public class CalendarController {
             String filename = file.getName();
             String extension = filename.substring(filename.lastIndexOf('.'), filename.length());
             if (extension.equals(".csv")) {
-                io.exportCSV(file, events);
+                io.setStrategy(new CSVWriter());
+                io.executeStrategy(file, events);
             } else if (extension.equals(".psv")) {
-                io.exportPSV(file, events);
+                io.setStrategy(new PSVWriter());
+                io.executeStrategy(file, events);
             }
         }
     }
 
     public TreeSet<Event> getEvents(Calendar d) {
-//        System.out.println("Notifier requested: " + d.getTime());
         return events.get(d);
     }
 
@@ -133,6 +150,7 @@ public class CalendarController {
         } else {
             events.get(d).add(e);
         }
+
     }
 
     public void addEvent(Calendar d, String name, Color color, int interval) {
@@ -144,7 +162,6 @@ public class CalendarController {
             case Event.WEEKLY_EVENT:
                 while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
                     c.add(Calendar.WEEK_OF_YEAR, 1);
-//                    System.out.println(c.getTime());
                     Model.Event repeatedEvent = new Model.Event((Calendar)c.clone(), name, color);
                     addEvent((Calendar)c.clone(), repeatedEvent);
                 }
@@ -165,8 +182,14 @@ public class CalendarController {
                 break;
         }
         cv.refreshCalendar(cv.monthToday, cv.yearToday);
+        no.update();
     }
 
+    public void removeEvent(Calendar d, String name, Color c) {
+        Event e = new Event(d, name, c);
+        events.get(d).remove(e);
+        cv.refreshCalendar(cv.monthToday, cv.yearToday);
+    }
 
     public void closeViewDateWindow() {
         dv.dispose();

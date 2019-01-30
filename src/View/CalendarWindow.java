@@ -234,16 +234,16 @@ public class CalendarWindow {
         try {
             URL resource = getClass().getClassLoader().getResource("export.png");
             File img = Paths.get(resource.toURI()).toFile();
-            btnExport.setIcon(new ImageIcon(resizeImage(img, 20, 30)));
+            btnExport.setIcon(new ImageIcon(ImageResizer.resizeImage(img, 20, 30)));
             resource = getClass().getClassLoader().getResource("import.png");
             img = Paths.get(resource.toURI()).toFile();
-            btnImport.setIcon(new ImageIcon(resizeImage(img, 20, 30)));
+            btnImport.setIcon(new ImageIcon(ImageResizer.resizeImage(img, 20, 30)));
             resource = getClass().getClassLoader().getResource("fb.png");
             img = Paths.get(resource.toURI()).toFile();
-            btnFB.setIcon(new ImageIcon(resizeImage(img, 25, 25)));
+            btnFB.setIcon(new ImageIcon(ImageResizer.resizeImage(img, 25, 25)));
             resource = getClass().getClassLoader().getResource("sms.png");
             img = Paths.get(resource.toURI()).toFile();
-            btnSMS.setIcon(new ImageIcon(resizeImage(img, 30, 30)));
+            btnSMS.setIcon(new ImageIcon(ImageResizer.resizeImage(img, 30, 30)));
 
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -263,7 +263,7 @@ public class CalendarWindow {
         {
             public void mouseClicked(MouseEvent evt)
             {
-                Point p = evt.getPoint();
+                Point p = evt.getLocationOnScreen();
                 int col = calendarTable.getSelectedColumn();
                 int row = calendarTable.getSelectedRow();
                 String s = (String)calendarTable.getModel().getValueAt(row, col);
@@ -276,13 +276,7 @@ public class CalendarWindow {
                         if (controller.isAddEventWindowOpen()) controller.closeAddEventWindow();
                         if (controller.isViewDateWindowOpen()) controller.closeViewDateWindow();
                     } else {
-                        Rectangle neighborCell = calendarTable.getCellRect(row + 2, col + 1, true);
-//                        p.translate(currentCell.x, currentCell.y);
-                        Point frmPt = frmMain.getLocation();
-                        Point tblPt = calendarTable.getLocation();
-//                        Point pt = new Point(frmPt.x + neighborCell.x + 22, frmPt.y + neighborCell.y + 70);
-                        Point pt = new Point(frmPt.x + neighborCell.x + tblPt.x, frmPt.y + neighborCell.y + tblPt.y);
-                        controller.openViewDateWindow(c, pt);
+                        controller.openViewDateWindow(c, new Point(p.x, p.y));
                     }
                 } else {
                     if (controller.isAddEventWindowOpen()) controller.closeAddEventWindow();
@@ -342,6 +336,12 @@ public class CalendarWindow {
 
         frmMain.setResizable(false);
         frmMain.setVisible(true);
+        frmMain.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                controller.saveEvents();
+            }
+        });
 
         GregorianCalendar cal = new GregorianCalendar();
         dayBound = cal.get(GregorianCalendar.DAY_OF_MONTH);
@@ -378,6 +378,7 @@ public class CalendarWindow {
         }
 
         refreshCalendar (monthBound, yearBound); //Refresh calendar
+
     }
 
     class btnPrev_Action implements ActionListener
@@ -456,21 +457,4 @@ public class CalendarWindow {
             }
         }
     }
-
-    public static BufferedImage resizeImage(File img, int width, int height) {
-        try{
-            BufferedImage rawHolder = ImageIO.read(img);
-            Image raw = rawHolder.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            BufferedImage resized = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = resized.createGraphics();
-            g2d.drawImage(raw, 0, 0, null);
-            g2d.dispose();
-            return resized;
-        }
-        catch(IOException e){
-            System.out.println("File not found.");
-            return null;
-        }
-    }
-
 }

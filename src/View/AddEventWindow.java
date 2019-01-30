@@ -30,6 +30,13 @@ public class AddEventWindow extends JFrame implements ActionListener {
         save.setEnabled(true);
     }
 
+    public AddEventWindow(CalendarController controller, Calendar d, String name, Color c) {
+        this(controller, d);
+        eventName.setText(name);
+        chooseClr.setSelectedColor(c);
+        save.setEnabled(true);
+    }
+
     public void init(){
         /*
         JPanel motherPnl = new JPanel();
