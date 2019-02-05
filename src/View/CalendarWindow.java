@@ -72,9 +72,7 @@ public class CalendarWindow {
             ArrayList<Color> eventColors = controller.getEventColors(c);
             StringBuilder sb = new StringBuilder();
             sb.append("<html>" + i + " <br/>");
-//            CustomPanel pane = new CustomPanel(i + "", 3);
             for (j = 0; j < eventNames.size() && j < 3; j++) {
-//                pane.addRow(eventNames.get(j), eventColors.get(j));
                 Color clr = eventColors.get(j);
                 String rgbCode = "rgb(" + clr.getRed() + "," + clr.getGreen() + "," + clr.getBlue() + ")";
                 String name = eventNames.get(j);
@@ -82,7 +80,6 @@ public class CalendarWindow {
             }
             sb.append("</html>");
             modelCalendarTable.setValueAt(sb.toString(), row, column);
-//            modelCalendarTable.setValueAt(pane, row, column);
         }
 
 //        calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new DateRenderer());
@@ -208,11 +205,8 @@ public class CalendarWindow {
         cmbYear = new JComboBox();
         btnPrev = new JButton ("<<");
         btnNext = new JButton (">>");
-//        btnAdd = new JButton ("<html><font color='white'>+ New Event</font></html>");
         btnAdd = new JButton("+ New Event");
         btnAdd.setFont(new Font("Arial", Font.BOLD, 14));
-//        btnAdd.setBackground(Color.BLUE);
-//        btnAdd.setForeground(Color.WHITE);
         btnAdd.setOpaque(true);
         btnAdd.setBorderPainted(false);
         btnExport = new JButton ("");

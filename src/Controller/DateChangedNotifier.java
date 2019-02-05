@@ -26,6 +26,7 @@ public class DateChangedNotifier implements Runnable {
             newState.set(Calendar.SECOND, 0);
             newState.set(Calendar.MILLISECOND, 0);
             if (state.compareTo(newState) != 0) { // state has changed
+                state = newState;
                 notifyObserver();
             }
         }

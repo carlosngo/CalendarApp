@@ -35,6 +35,11 @@ public class AddEventWindow extends JFrame implements ActionListener {
         eventName.setText(name);
         chooseClr.setSelectedColor(c);
         save.setEnabled(true);
+        save.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                controller.removeEvent(d, name, c);
+            }
+        });
     }
 
     public void init(){

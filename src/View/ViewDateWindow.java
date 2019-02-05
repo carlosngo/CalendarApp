@@ -37,7 +37,8 @@ public class ViewDateWindow extends JFrame {
     //ArrayList<String> test_events;
     //String test_date;
 
-    public ViewDateWindow(CalendarController controller, Calendar date, ArrayList<String> eventNames, ArrayList<Color> eventColors, Point pt) {
+    public ViewDateWindow(CalendarController controller, Calendar date, ArrayList<String> eventNames,
+                          ArrayList<Color> eventColors, Point pt) {
         this.controller = controller;
         this.date = date;
         content = new JPanel();
@@ -102,7 +103,8 @@ public class ViewDateWindow extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         int choice = JOptionPane.showConfirmDialog(null,
-                                "Are you sure you want to delete this event?", "Delete Event", JOptionPane.YES_NO_OPTION);
+                                "Are you sure you want to delete this event?",
+                                "Delete Event", JOptionPane.YES_NO_OPTION);
                         if (choice == JOptionPane.YES_OPTION) {
                             controller.removeEvent(date, name, c);
                             controller.closeViewDateWindow();
@@ -112,7 +114,6 @@ public class ViewDateWindow extends JFrame {
                 editEvent.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        controller.removeEvent(date, name, c);
                         controller.openAddEventWindow(date, name, c);
                         controller.closeViewDateWindow();
                     }
