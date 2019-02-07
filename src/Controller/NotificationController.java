@@ -31,9 +31,9 @@ public class NotificationController {
             for (Event e : events) {
                 if (subject instanceof FBWindow) {
                     ((FBWindow) subject).showNewEvent(e.getName(), e.getDate().get(Calendar.MONTH) + 1,
-                            e.getDate().get(Calendar.DAY_OF_MONTH), e.getDate().get(Calendar.YEAR), e.getColor());
+                            e.getDate().get(Calendar.DAY_OF_MONTH), e.getDate().get(Calendar.YEAR), e.getTextColor());
                 } else if (subject instanceof SMSWindow) {
-                    ((SMSWindow) subject).sendSMS(new SMS(e.getName(), e.getDate(), e.getColor()));
+                    ((SMSWindow) subject).sendSMS(new SMS(e.getName(), e.getDate(), e.getTextColor()));
                 }
             }
         }
@@ -46,10 +46,10 @@ public class NotificationController {
                 if (!notifiedEvents.contains(e)) {
                     for (JFrame subject : subjects) {
                         if (subject instanceof FBWindow) {
-                            ((FBWindow) subject).showNewEvent(e.getName(), e.getDate().get(Calendar.MONTH) + 1,
-                                    e.getDate().get(Calendar.DAY_OF_MONTH), e.getDate().get(Calendar.YEAR), e.getColor());
+                            ((FBWindow) subject).showNewEvent(e.getName(), state.get(Calendar.MONTH) + 1,
+                                    state.get(Calendar.DAY_OF_MONTH), state.get(Calendar.YEAR), e.getTextColor());
                         } else if (subject instanceof SMSWindow) {
-                            ((SMSWindow) subject).sendSMS(new SMS(e.getName(), e.getDate(), e.getColor()));
+                            ((SMSWindow) subject).sendSMS(new SMS(e.getName(), state, e.getTextColor()));
                         }
                     }
                     notifiedEvents.add(e);

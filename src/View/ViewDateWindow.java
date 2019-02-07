@@ -38,7 +38,7 @@ public class ViewDateWindow extends JFrame {
     //String test_date;
 
     public ViewDateWindow(CalendarController controller, Calendar date, ArrayList<String> eventNames,
-                          ArrayList<Color> eventColors, Point pt) {
+                          ArrayList<Color> eventTextColors, ArrayList<Color> eventBackgroundColors, Point pt) {
         this.controller = controller;
         this.date = date;
         content = new JPanel();
@@ -94,11 +94,16 @@ public class ViewDateWindow extends JFrame {
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
-                Color c = eventColors.get(i);
-                String rgbCode = "rgb(" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ")";
+                Color c = eventTextColors.get(i);
+                Color bckClr = eventBackgroundColors.get(i);
+//                String rgbCode = "rgb(" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ")";
 //                String name = "&nbsp;&nbsp;&nbsp;" + eventNames.get(i);
                 String name = eventNames.get(i);
-                lblName.setText("<html><font color='" + rgbCode + "'>" + name + "</font></html>");
+//                lblName.setText("<html><font color='" + rgbCode + "'>" + name + "</font></html>");
+                lblName.setText(name);
+                lblName.setForeground(eventTextColors.get(i));
+                lblName.setBackground(eventBackgroundColors.get(i));
+                lblName.setOpaque(true);
                 deleteEvent.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -114,7 +119,7 @@ public class ViewDateWindow extends JFrame {
                 editEvent.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        controller.openAddEventWindow(date, name, c);
+                        controller.openAddEventWindow(date, name, c, bckClr);
                         controller.closeViewDateWindow();
                     }
                 });

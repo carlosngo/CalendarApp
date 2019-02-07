@@ -1,6 +1,8 @@
 package View;
 
 import Controller.*;
+import Model.Event;
+import Model.Holiday;
 
 import java.util.*;
 import javax.swing.*;
@@ -14,7 +16,7 @@ public class AddEventWindow extends JFrame implements ActionListener {
     // SWING COMPONENTS
     private JButton cancel, save;
     private JTextField eventName;
-    private JComboBox interval, mon, day, yr;
+    private JComboBox interval, type, mon, day, yr;
     private ColorChooserButton chooseClr;
 
     public AddEventWindow(CalendarController controller){
@@ -30,11 +32,14 @@ public class AddEventWindow extends JFrame implements ActionListener {
         save.setEnabled(true);
     }
 
-    public AddEventWindow(CalendarController controller, Calendar d, String name, Color c) {
+    public AddEventWindow(CalendarController controller, Calendar d, String name, Color c, Color backClr) {
         this(controller, d);
         eventName.setText(name);
         chooseClr.setSelectedColor(c);
+        if (backClr.getRGB() == Holiday.COLOR_CODE.getRGB()) type.setSelectedIndex(1);
         save.setEnabled(true);
+
+
         save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 controller.removeEvent(d, name, c);
@@ -107,10 +112,30 @@ public class AddEventWindow extends JFrame implements ActionListener {
 
         JLabel intervalLabel = new JLabel("Repeat: ");
 //        intervalLabel.setForeground(new Color(255, 255, 255));
-        Object[] intervalOptions = {"Never", "Weekly", "Biweekly", "Yearly"};
+        Object[] intervalOptions = {"Never", "Daily", "Weekly", "Monthly", "Yearly"};
         interval = new JComboBox(intervalOptions);
         p2.add(intervalLabel);
         p2.add(interval);
+        p2.add(Box.createRigidArea(new Dimension(30, 0)));
+
+        JLabel typeLabel = new JLabel("Type: ");
+        Object[] typeOptions = {"Normal", "Holiday"};
+        type = new JComboBox(typeOptions);
+        type.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (((String)type.getSelectedItem()).equals("Holiday")) {
+                    interval.setSelectedIndex(Event.YEARLY_EVENT);
+                    interval.setEnabled(false);
+                } else {
+                    interval.setSelectedIndex(Event.ONE_TIME_EVENT);
+                    interval.setEnabled(true);
+                }
+            }
+        });
+        p2.add(typeLabel);
+        p2.add(type);
+
 
         JPanel p3 = new JPanel();
         p3.setLayout(new FlowLayout());
@@ -269,6 +294,8 @@ public class AddEventWindow extends JFrame implements ActionListener {
         else
             save.setEnabled(false);
 
+
+
         if(e.getSource() == cancel)
             controller.closeAddEventWindow();
 
@@ -279,7 +306,12 @@ public class AddEventWindow extends JFrame implements ActionListener {
             }
             Calendar d = getEventDate();
             if (d != null)
-                controller.addEvent(getEventDate(), getEventName(), getEventColor(), getEventInterval());
+                if (((String)type.getSelectedItem()).equals("Holiday")) {
+                    controller.addHoliday(getEventDate(), getEventName(), getEventColor());
+                } else {
+                    controller.addEvent(getEventDate(), getEventName(), getEventColor(), getEventInterval());
+                    System.out.println(getEventInterval());
+                }
             else
                 JOptionPane.showMessageDialog(null, "Invalid date.");
             controller.closeAddEventWindow();

@@ -1,27 +1,28 @@
 package Controller;
 
+import Model.*;
 import Model.Event;
 import View.*;
 
+import java.awt.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
 import javax.swing.*;
-import java.awt.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class CalendarController {
     private CalendarWindow cv;
     private AddEventWindow aev;
     private ViewDateWindow dv;
-    private TreeMap<Calendar, TreeSet<Model.Event>> events;
+    private ArrayList<Event> events;
     private EventIO io;
     private NotificationController no;
 
     public CalendarController() {
-        events = new TreeMap<>();
+        events = new ArrayList<>();
         io = new EventIO();
         loadEvents();
         cv = new CalendarWindow(this);
@@ -39,10 +40,12 @@ public class CalendarController {
         aev = new AddEventWindow(this, d);
     }
 
-    public void openAddEventWindow(Calendar d, String name, Color c) { aev = new AddEventWindow(this, d, name, c); }
+    public void openAddEventWindow(Calendar d, String name, Color c, Color bckClr) {
+        aev = new AddEventWindow(this, d, name, c, bckClr);
+    }
 
     public void openViewDateWindow(Calendar d, Point p) {
-        dv = new ViewDateWindow(this, d, getEventNames(d), getEventColors(d), p);
+        dv = new ViewDateWindow(this, d, getEventNames(d), getEventTextColors(d), getEventBackgroundColors(d), p);
     }
 
     public void openFBWindow() {
@@ -119,75 +122,70 @@ public class CalendarController {
     }
 
     public TreeSet<Event> getEvents(Calendar d) {
-        return events.get(d);
+        TreeSet<Event> set = new TreeSet<>();
+        for (Event e : events) {
+            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
+                set.add(e);
+        }
+        return set;
     }
 
     public ArrayList<String> getEventNames(Calendar d) {
         ArrayList<String> names = new ArrayList<>();
-        if (events.containsKey(d)) {
-            for (Model.Event e : events.get(d)) {
+        for (Event e : events) {
+            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
                 names.add(e.getName());
-            }
         }
         return names;
     }
 
-    public ArrayList<Color> getEventColors(Calendar d) {
+    public ArrayList<Color> getEventTextColors(Calendar d) {
         ArrayList<Color> colors = new ArrayList<>();
-        if (events.containsKey(d)) {
-            for (Model.Event e : events.get(d)) {
-                colors.add(e.getColor());
-            }
+        for (Event e : events) {
+            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
+                colors.add(e.getTextColor());
         }
         return colors;
     }
 
-    public void addEvent(Calendar d, Event e) {
-        if (!events.containsKey(d)) {
-            TreeSet<Model.Event> set = new TreeSet<>();
-            set.add(e);
-            events.put(d, set);
-        } else {
-            events.get(d).add(e);
+    public ArrayList<Color> getEventBackgroundColors(Calendar d) {
+        ArrayList<Color> colors = new ArrayList<>();
+        for (Event e : events) {
+            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
+                colors.add(e.getBackgroundColor());
         }
+        return colors;
+    }
 
+    public ArrayList<Integer> getEventIntervals (Calendar d) {
+        ArrayList<Integer> intervals = new ArrayList<>();
+        for (Event e : events) {
+            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
+                intervals.add(e.getInterval());
+        }
+        return intervals;
     }
 
     public void addEvent(Calendar d, String name, Color color, int interval) {
-        Calendar c = (Calendar)d.clone();
+        events.add(new Event(d, name, color, interval));
+        cv.refreshCalendar(cv.monthToday, cv.yearToday);
+        no.update();
+    }
 
-        Model.Event ev = new Model.Event((Calendar) c.clone(), name, color);
-        addEvent((Calendar) c.clone(), ev);
-        switch (interval) {
-            case Event.WEEKLY_EVENT:
-                while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
-                    c.add(Calendar.WEEK_OF_YEAR, 1);
-                    Model.Event repeatedEvent = new Model.Event((Calendar)c.clone(), name, color);
-                    addEvent((Calendar)c.clone(), repeatedEvent);
-                }
-                break;
-            case Event.BIWEEKLY_EVENT:
-                while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
-                    c.add(Calendar.WEEK_OF_YEAR, 2);
-                    Model.Event repeatedEvent = new Model.Event((Calendar)c.clone(), name, color);
-                    addEvent((Calendar)c.clone(), repeatedEvent);
-                }
-                break;
-            case Event.YEARLY_EVENT:
-                while (c.get(Calendar.YEAR) <= cv.yearBound + 100) {
-                    c.add(Calendar.YEAR, 1);
-                    Model.Event repeatedEvent = new Model.Event((Calendar)c.clone(), name, color);
-                    addEvent((Calendar)c.clone(), repeatedEvent);
-                }
-                break;
-        }
+    public void addHoliday(Calendar d, String name, Color color) {
+        events.add(new Holiday(d, name, color));
         cv.refreshCalendar(cv.monthToday, cv.yearToday);
         no.update();
     }
 
     public void removeEvent(Calendar d, String name, Color c) {
-        Event e = new Event(d, name, c);
-        events.get(d).remove(e);
+
+        for (int i = 0; i < events.size(); i++) {
+            Event e = events.get(i);
+            if (repeatsAtDate(e.getDate(), e.getInterval(), d) && e.getName().equals(name) &&
+                    e.getTextColor().getRGB() == c.getRGB()) events.remove(i);
+        }
+
         cv.refreshCalendar(cv.monthToday, cv.yearToday);
     }
 
@@ -199,6 +197,24 @@ public class CalendarController {
     public void closeAddEventWindow() {
         aev.dispose();
         aev = null;
+    }
+
+    private boolean repeatsAtDate(Calendar startDate, int interval, Calendar query) {
+        if (startDate.compareTo(query) > 0) return false;
+        switch (interval) {
+            case Event.ONE_TIME_EVENT:
+                return startDate.compareTo(query) == 0;
+            case Event.DAILY_EVENT:
+                return startDate.compareTo(query) <= 0;
+            case Event.WEEKLY_EVENT:
+                return startDate.get(Calendar.DAY_OF_WEEK) == query.get(Calendar.DAY_OF_WEEK);
+            case Event.MONTHLY_EVENT:
+                return startDate.get(Calendar.DAY_OF_MONTH) == query.get(Calendar.DAY_OF_MONTH);
+            case Event.YEARLY_EVENT:
+                return startDate.get(Calendar.MONTH) == query.get(Calendar.MONTH) &&
+                        startDate.get(Calendar.DAY_OF_MONTH) == query.get(Calendar.DAY_OF_MONTH);
+        }
+        return false;
     }
 
     public boolean isViewDateWindowOpen() { return dv != null; }

@@ -2,18 +2,14 @@ package View;
 
 import Controller.*;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 //import java.awt.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.Calendar;
@@ -69,14 +65,19 @@ public class CalendarWindow {
             c.set(year, month, i, 0, 0, 0);
             c.set(Calendar.MILLISECOND, 0);
             ArrayList<String> eventNames = controller.getEventNames(c);
-            ArrayList<Color> eventColors = controller.getEventColors(c);
+            ArrayList<Color> eventTextColors = controller.getEventTextColors(c);
+            ArrayList<Color> eventBackgroundColors = controller.getEventBackgroundColors(c);
             StringBuilder sb = new StringBuilder();
             sb.append("<html>" + i + " <br/>");
             for (j = 0; j < eventNames.size() && j < 3; j++) {
-                Color clr = eventColors.get(j);
-                String rgbCode = "rgb(" + clr.getRed() + "," + clr.getGreen() + "," + clr.getBlue() + ")";
+                Color txtClr = eventTextColors.get(j);
+                Color backClr = eventBackgroundColors.get(j);
+                String fontClr = "rgb(" + txtClr.getRed() + "," + txtClr.getGreen() + "," + txtClr.getBlue() + ")";
+                String backgroundClr = String.format("#%02x%02x%02x", backClr.getRed(), backClr.getGreen(), backClr.getBlue());
                 String name = eventNames.get(j);
-                sb.append("<font color='" + rgbCode + "'><b>" + name + "</b></font><br/>");
+//                sb.append("<font color='" + rgbCode + "'><b>" + name + "</b></font><br/>");
+                sb.append("<p style=\"background-color: " +  backgroundClr + "\"><font color='" + fontClr + "'><b>" + name + "</b></font></p>");
+
             }
             sb.append("</html>");
             modelCalendarTable.setValueAt(sb.toString(), row, column);

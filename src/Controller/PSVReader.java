@@ -1,17 +1,17 @@
 package Controller;
 
+import Model.*;
 import Model.Event;
 
 import java.awt.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.TreeMap;
-import java.util.TreeSet;
+
 
 public class PSVReader implements FileStrategy {
     @Override
-    public void execute(File file, TreeMap<Calendar, TreeSet<Event>> events) {
+    public void execute(File file, ArrayList<Event> events) {
         BufferedReader in = null;
         try {
             in = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"));
@@ -26,26 +26,30 @@ public class PSVReader implements FileStrategy {
                 c.set(year, month - 1, day, 0, 0, 0);
                 c.set(Calendar.MILLISECOND, 0);
                 String name = fields[1].trim();
-                Color color;
+                Color textColor;
                 String clr = fields[2].trim();
                 if (clr.equals("red")) {
-                    color = new Color(255, 0, 0);
+                    textColor= new Color(255, 0, 0);
                 } else if (clr.equals("blue")) {
-                    color = new Color(0, 0, 255);
+                    textColor = new Color(0, 0, 255);
                 } else if (clr.equals("green")) {
-                    color = new Color(0, 255, 0);
+                    textColor = new Color(0, 255, 0);
                 } else {
-                    color = new Color(Integer.parseInt(clr));
+                    textColor = new Color(Integer.parseInt(clr));
                 }
-                Model.Event e = new Model.Event(c, name, color);
-
-                if (events.containsKey(c)) {
-                    events.get(c).add(e);
+                Event e;
+                if (fields.length > 3) {
+                    int backClrRGB = Integer.parseInt(fields[3].trim());
+                    if (backClrRGB == Holiday.COLOR_CODE.getRGB()) {
+                        e = new Holiday(c, name, textColor);
+                    } else {
+                        int interval = Integer.parseInt(fields[4].trim());
+                        e = new Event(c, name, textColor, interval);
+                    }
                 } else {
-                    TreeSet<Model.Event> toAdd = new TreeSet<>();
-                    toAdd.add(e);
-                    events.put(c, toAdd);
+                    e = new Event(c, name, textColor);
                 }
+                events.add(e);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -16,7 +16,7 @@ public class EventIO {
         this.fs = fs;
     }
 
-    public void executeStrategy(File file, TreeMap<Calendar, TreeSet<Event>> events) {
+    public void executeStrategy(File file, ArrayList<Event> events) {
         fs.execute(file, events);
     }
 }

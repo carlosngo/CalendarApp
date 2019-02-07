@@ -15,17 +15,27 @@ import java.util.Calendar;
  */
 public class Event implements Comparable<Event> {
     public static final int ONE_TIME_EVENT = 0;
-    public static final int WEEKLY_EVENT = 1;
-    public static final int BIWEEKLY_EVENT = 2;
-    public static final int YEARLY_EVENT = 3;
+    public static final int DAILY_EVENT = 1;
+    public static final int WEEKLY_EVENT = 2;
+    public static final int MONTHLY_EVENT = 3;
+    public static final int YEARLY_EVENT = 4;
     private Calendar date;
     private String name;
-    private Color color;
+    private Color textColor;
+    private Color backgroundColor;
+    private int interval;
 
-    public Event(Calendar date, String name, Color color) {
+    public Event(Calendar date, String name, Color textColor) {
         this.date = date;
         this.name = name;
-        this.color = color;
+        this.textColor = textColor;
+        interval = ONE_TIME_EVENT;
+        backgroundColor = Color.WHITE;
+    }
+
+    public Event(Calendar date, String name, Color textColor, int interval) {
+        this(date, name, textColor);
+        this.interval = interval;
     }
 
     public Calendar getDate() {
@@ -44,13 +54,26 @@ public class Event implements Comparable<Event> {
         this.name = name;
     }
 
-    public Color getColor() {
-        return color;
+    public Color getTextColor() {
+        return textColor;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public void setTextColor(Color color) {
+        this.textColor = color;
     }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color color) {
+        this.backgroundColor = color;
+    }
+
+    public int getInterval() { return interval; }
+
+    public void setInterval(int interval) { this.interval = interval; }
+
 
     @Override
     public boolean equals(Object obj) {

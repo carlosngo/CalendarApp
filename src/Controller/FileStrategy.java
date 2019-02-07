@@ -4,5 +4,5 @@ import Model.*;
 import java.io.*;
 import java.util.*;
 public interface FileStrategy {
-    public void execute(File file, TreeMap<Calendar, TreeSet<Event>> events);
+    public void execute(File file, ArrayList<Event> events);
 }

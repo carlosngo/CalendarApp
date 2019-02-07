@@ -7,24 +7,27 @@ import java.util.*;
 
 public class PSVWriter implements FileStrategy {
     @Override
-    public void execute(File file, TreeMap<Calendar, TreeSet<Event>> events) {
+    public void execute(File file, ArrayList<Event> events) {
         PrintWriter out = null;
         try {
             out = new PrintWriter(new FileWriter(file));
 
-            for (Calendar c : events.keySet()) {
+            for (Event event : events) {
+                Calendar c = event.getDate();
                 int month = c.get(Calendar.MONTH) + 1;
                 int year = c.get(Calendar.YEAR);
                 int day = c.get(Calendar.DAY_OF_MONTH);
-                for (Model.Event event : events.get(c)) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(event.getName());
-                    sb.append("|");
-                    sb.append(month + "/" + day + "/" + year);
-                    sb.append("|");
-                    sb.append(Integer.toString(event.getColor().getRGB()));
-                    out.println(sb.toString());
-                }
+                StringBuilder sb = new StringBuilder();
+                sb.append(event.getName());
+                sb.append("|");
+                sb.append(month + "/" + day + "/" + year);
+                sb.append("|");
+                sb.append(Integer.toString(event.getTextColor().getRGB()));
+                sb.append("|");
+                sb.append(Integer.toString(event.getBackgroundColor().getRGB()));
+                sb.append("|");
+                sb.append(event.getInterval());
+                out.println(sb.toString());
             }
             System.out.println("Events successfully saved.");
 
