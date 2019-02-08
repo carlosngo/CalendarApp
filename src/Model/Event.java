@@ -19,6 +19,10 @@ public class Event implements Comparable<Event> {
     public static final int WEEKLY_EVENT = 2;
     public static final int MONTHLY_EVENT = 3;
     public static final int YEARLY_EVENT = 4;
+
+    public static final int HOLIDAY = 1;
+    public static final int BIRTHDAY = 2;
+
     private Calendar date;
     private String name;
     private Color textColor;

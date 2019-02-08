@@ -119,12 +119,15 @@ public class AddEventWindow extends JFrame implements ActionListener {
         p2.add(Box.createRigidArea(new Dimension(30, 0)));
 
         JLabel typeLabel = new JLabel("Type: ");
-        Object[] typeOptions = {"Normal", "Holiday"};
+        Object[] typeOptions = {"Normal", "Holiday", "Birthday"};
         type = new JComboBox(typeOptions);
         type.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (((String)type.getSelectedItem()).equals("Holiday")) {
+                    interval.setSelectedIndex(Event.YEARLY_EVENT);
+                    interval.setEnabled(false);
+                } else if (((String)type.getSelectedItem()).equals("Birthday")) {
                     interval.setSelectedIndex(Event.YEARLY_EVENT);
                     interval.setEnabled(false);
                 } else {
@@ -308,6 +311,8 @@ public class AddEventWindow extends JFrame implements ActionListener {
             if (d != null)
                 if (((String)type.getSelectedItem()).equals("Holiday")) {
                     controller.addHoliday(getEventDate(), getEventName(), getEventColor());
+                } else if (((String) type.getSelectedItem()).equals("Birthday")) {
+                    controller.addBirthday(getEventDate(), getEventName(), getEventColor());
                 } else {
                     controller.addEvent(getEventDate(), getEventName(), getEventColor(), getEventInterval());
                     System.out.println(getEventInterval());

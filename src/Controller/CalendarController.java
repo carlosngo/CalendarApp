@@ -14,7 +14,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class CalendarController {
-    private CalendarWindow cv;
+    private CalendarProgram cv;
     private AddEventWindow aev;
     private ViewDateWindow dv;
     private ArrayList<Event> events;
@@ -25,7 +25,7 @@ public class CalendarController {
         events = new ArrayList<>();
         io = new EventIO();
         loadEvents();
-        cv = new CalendarWindow(this);
+        cv = new CalendarProgram(this);
         no = new NotificationController(this);
         openFBWindow();
         openSMSWindow();
@@ -49,13 +49,13 @@ public class CalendarController {
     }
 
     public void openFBWindow() {
-        no.addSubject(new FBWindow());
-//        new Thread(new NotificationHandler(this, new FBWindow())).start();
+        no.addSubject(new FBView());
+//        new Thread(new NotificationHandler(this, new FBView())).start();
     }
 
     public void openSMSWindow() {
-        no.addSubject(new SMSWindow());
-//        new Thread(new NotificationHandler(this, new SMSWindow())).start();
+        no.addSubject(new SMSView());
+//        new Thread(new NotificationHandler(this, new SMSView())).start();
     }
 
     public void importEvents() {
@@ -174,6 +174,12 @@ public class CalendarController {
 
     public void addHoliday(Calendar d, String name, Color color) {
         events.add(new Holiday(d, name, color));
+        cv.refreshCalendar(cv.monthToday, cv.yearToday);
+        no.update();
+    }
+
+    public void addBirthday(Calendar d, String name, Color color) {
+        events.add(new Birthday(d, name, color));
         cv.refreshCalendar(cv.monthToday, cv.yearToday);
         no.update();
     }
