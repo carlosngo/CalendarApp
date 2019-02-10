@@ -18,12 +18,10 @@ public class CalendarController {
     private AddEventWindow aev;
     private ViewDateWindow dv;
     private ArrayList<Event> events;
-    private EventIO io;
     private NotificationController no;
 
     public CalendarController() {
         events = new ArrayList<>();
-        io = new EventIO();
         loadEvents();
         cv = new CalendarProgram(this);
         no = new NotificationController(this);
@@ -69,11 +67,11 @@ public class CalendarController {
             String filename = file.getName();
             String extension = filename.substring(filename.lastIndexOf('.'), filename.length());
             if (extension.equals(".csv")) {
-                io.setStrategy(new CSVReader());
-                io.executeStrategy(file, events);
+                EventIO.setStrategy(new CSVReader());
+                EventIO.executeStrategy(file, events);
             } else if (extension.equals(".psv")) {
-                io.setStrategy(new PSVReader());
-                io.executeStrategy(file, events);
+                EventIO.setStrategy(new PSVReader());
+                EventIO.executeStrategy(file, events);
             }
         }
     }
@@ -82,8 +80,8 @@ public class CalendarController {
         try {
             URL resource = getClass().getClassLoader().getResource("events.csv");
             File csv = Paths.get(resource.toURI()).toFile();
-            io.setStrategy(new CSVWriter());
-            io.executeStrategy(csv, events);
+            EventIO.setStrategy(new CSVWriter());
+            EventIO.executeStrategy(csv, events);
 //            io.exportCSV(csv, events);
         } catch (URISyntaxException e) {
             e.printStackTrace();
@@ -94,8 +92,8 @@ public class CalendarController {
         try {
             URL resource = getClass().getClassLoader().getResource("events.csv");
             File csv = Paths.get(resource.toURI()).toFile();
-            io.setStrategy(new CSVReader());
-            io.executeStrategy(csv, events);
+            EventIO.setStrategy(new CSVReader());
+            EventIO.executeStrategy(csv, events);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -112,11 +110,11 @@ public class CalendarController {
             String filename = file.getName();
             String extension = filename.substring(filename.lastIndexOf('.'), filename.length());
             if (extension.equals(".csv")) {
-                io.setStrategy(new CSVWriter());
-                io.executeStrategy(file, events);
+                EventIO.setStrategy(new CSVWriter());
+                EventIO.executeStrategy(file, events);
             } else if (extension.equals(".psv")) {
-                io.setStrategy(new PSVWriter());
-                io.executeStrategy(file, events);
+                EventIO.setStrategy(new PSVWriter());
+                EventIO.executeStrategy(file, events);
             }
         }
     }

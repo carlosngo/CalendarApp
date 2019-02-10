@@ -94,7 +94,7 @@ public class CalendarProgram {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (Exception e) {}
-
+        this.controller = new CalendarController();
         frmMain = new JFrame ("Calendar Application");
         frmMain.setSize(660, 750);
         pane = frmMain.getContentPane();

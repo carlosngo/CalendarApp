@@ -42,6 +42,8 @@ public class PSVReader implements FileStrategy {
                     int backClrRGB = Integer.parseInt(fields[3].trim());
                     if (backClrRGB == Holiday.COLOR_CODE.getRGB()) {
                         e = new Holiday(c, name, textColor);
+                    } else if (backClrRGB == Birthday.COLOR_CODE.getRGB()) {
+                        e = new Birthday(c, name, textColor);
                     } else {
                         int interval = Integer.parseInt(fields[4].trim());
                         e = new Event(c, name, textColor, interval);

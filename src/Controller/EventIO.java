@@ -10,13 +10,13 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class EventIO {
-    FileStrategy fs;
+    public static FileStrategy fs;
 
-    public void setStrategy(FileStrategy fs) {
-        this.fs = fs;
+    public static void setStrategy(FileStrategy fs) {
+        EventIO.fs = fs;
     }
 
-    public void executeStrategy(File file, ArrayList<Event> events) {
+    public static void executeStrategy(File file, ArrayList<Event> events) {
         fs.execute(file, events);
     }
 }
