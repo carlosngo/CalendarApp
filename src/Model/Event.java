@@ -22,6 +22,8 @@ public class Event implements Comparable<Event> {
 
     public static final int HOLIDAY = 1;
     public static final int BIRTHDAY = 2;
+    public static final int ANNIVERSARY = 3;
+    public static final int UTILITY_BILL_PAYMENT = 4;
 
     private Calendar date;
     private String name;
