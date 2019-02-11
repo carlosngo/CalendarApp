@@ -18,14 +18,14 @@ public class PSVReader implements FileStrategy {
             String line;
             while ((line = in.readLine()) != null) {
                 String[] fields = line.split("\\|");
-                String[] dateFormat = fields[0].split("/");
+                String[] dateFormat = fields[1].split("/");
                 int month = Integer.parseInt(dateFormat[0].trim());
                 int year = Integer.parseInt(dateFormat[2].trim());
                 int day = Integer.parseInt(dateFormat[1].trim());
                 Calendar c = Calendar.getInstance();
                 c.set(year, month - 1, day, 0, 0, 0);
                 c.set(Calendar.MILLISECOND, 0);
-                String name = fields[1].trim();
+                String name = fields[0].trim();
                 Color textColor;
                 String clr = fields[2].trim();
                 if (clr.equals("red")) {
@@ -44,6 +44,10 @@ public class PSVReader implements FileStrategy {
                         e = new Holiday(c, name, textColor);
                     } else if (backClrRGB == Birthday.COLOR_CODE.getRGB()) {
                         e = new Birthday(c, name, textColor);
+                    } else if (backClrRGB == Anniversary.COLOR_CODE.getRGB()) {
+                        e = new Anniversary(c, name, textColor);
+                    } else if (backClrRGB == UtilityBillPayment.COLOR_CODE.getRGB()) {
+                        e = new UtilityBillPayment(c, name, textColor);
                     } else {
                         int interval = Integer.parseInt(fields[4].trim());
                         e = new Event(c, name, textColor, interval);

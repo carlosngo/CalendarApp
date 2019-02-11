@@ -41,6 +41,10 @@ public class CSVReader implements FileStrategy {
                         e = new Holiday(c, name, textColor);
                     } else if (backClrRGB == Birthday.COLOR_CODE.getRGB()) {
                         e = new Birthday(c, name, textColor);
+                    } else if (backClrRGB == Anniversary.COLOR_CODE.getRGB()) {
+                        e = new Anniversary(c, name, textColor);
+                    } else if (backClrRGB == UtilityBillPayment.COLOR_CODE.getRGB()) {
+                        e = new UtilityBillPayment(c, name, textColor);
                     } else {
                         int interval = Integer.parseInt(fields[4].trim());
                         e = new Event(c, name, textColor, interval);

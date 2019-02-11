@@ -182,6 +182,18 @@ public class CalendarController {
         no.update();
     }
 
+    public void addAnniversary(Calendar d, String name, Color color) {
+        events.add(new Anniversary(d, name, color));
+        cv.refreshCalendar(cv.monthToday, cv.yearToday);
+        no.update();
+    }
+
+    public void addUtilityBillPayment(Calendar d, String name, Color color) {
+        events.add(new UtilityBillPayment(d, name, color));
+        cv.refreshCalendar(cv.monthToday, cv.yearToday);
+        no.update();
+    }
+
     public void removeEvent(Calendar d, String name, Color c) {
 
         for (int i = 0; i < events.size(); i++) {
