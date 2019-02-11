@@ -19,9 +19,9 @@ public class CalendarProgram {
     private CalendarController controller;
 
     /**** Swing Components ****/
-    public JLabel monthLabel, yearLabel;
+    public JLabel monthLabel, monthLabel2, yearLabel;
     public JButton btnPrev, btnNext, btnAdd, btnImport, btnExport, btnFB, btnSMS;
-    public JComboBox cmbYear;
+    public JComboBox cmbYear, cmbMonth;
     public JFrame frmMain;
     public Container pane;
     public JScrollPane scrollCalendarTable;
@@ -47,6 +47,7 @@ public class CalendarProgram {
         monthLabel.setBounds(320-monthLabel.getPreferredSize().width/2, 50, 360, 50);
 
         cmbYear.setSelectedItem(""+year);
+        cmbMonth.setSelectedIndex(month);
 
         for (i = 0; i < 6; i++)
             for (j = 0; j < 7; j++)
@@ -94,7 +95,7 @@ public class CalendarProgram {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (Exception e) {}
-        this.controller = new CalendarController();
+
         frmMain = new JFrame ("Calendar Application");
         frmMain.setSize(660, 750);
         pane = frmMain.getContentPane();
@@ -202,8 +203,13 @@ public class CalendarProgram {
 
         monthLabel = new JLabel ("January");
         monthLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        yearLabel = new JLabel ("Change year:");
+        yearLabel = new JLabel ("Year:");
         cmbYear = new JComboBox();
+        String[] monthOptions = {"January", "February", "March", "April",
+                "May", "June", "July", "August", "September",
+                "October", "November", "December"};
+        monthLabel2 = new JLabel ("Month:");
+        cmbMonth = new JComboBox(monthOptions);
         btnPrev = new JButton ("<<");
         btnNext = new JButton (">>");
         btnAdd = new JButton("+ New Event");
@@ -293,12 +299,17 @@ public class CalendarProgram {
         btnFB.addActionListener(new btnFB_Action());
         btnSMS.addActionListener(new btnSMS_Action());
 
-        ((JLabel)cmbYear.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
+        //((JLabel)cmbYear.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
         cmbYear.addActionListener(new cmbYear_Action());
+
+        //((JLabel)cmbMonth.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
+        cmbMonth.addActionListener(new cmbMonth_Action());
 
         pane.add(calendarPanel);
         calendarPanel.add(monthLabel);
         calendarPanel.add(yearLabel);
+        calendarPanel.add(monthLabel2);
+        calendarPanel.add(cmbMonth);
         calendarPanel.add(cmbYear);
         calendarPanel.add(btnPrev);
         calendarPanel.add(btnNext);
@@ -318,15 +329,17 @@ public class CalendarProgram {
 
         calendarPanel.setBounds(0, 0, 640, 670);
         monthLabel.setBounds(320-monthLabel.getPreferredSize().width/2, 50, 200, 50);
-        yearLabel.setBounds(465, 610, 85, 40);
-        cmbYear.setBounds(540, 610, 80, 40);
         btnPrev.setBounds(20, 50, 100, 50);
         btnNext.setBounds(520, 50, 100, 50);
         btnAdd.setBounds(20, 610, 130, 40);
-        btnImport.setBounds(170, 610, 40, 40);
-        btnExport.setBounds(210, 610, 40, 40);
-        btnFB.setBounds(270, 610, 40, 40);
-        btnSMS.setBounds(320, 610, 40, 40);
+        btnImport.setBounds(150, 610, 40, 40);
+        btnExport.setBounds(180, 610, 40, 40);
+        btnFB.setBounds(235, 610, 40, 40);
+        btnSMS.setBounds(275, 610, 40, 40);
+        monthLabel2.setBounds(340, 610, 50, 40);
+        cmbMonth.setBounds(380, 610, 118, 40);
+        yearLabel.setBounds(503, 610, 35, 40);
+        cmbYear.setBounds(533, 610, 90, 40);
         scrollCalendarTable.setBounds(20, 100, 600, 500);
 
         frmMain.setResizable(false);
@@ -448,6 +461,19 @@ public class CalendarProgram {
             {
                 String b = cmbYear.getSelectedItem().toString();
                 yearToday = Integer.parseInt(b);
+                refreshCalendar(monthToday, yearToday);
+            }
+        }
+    }
+
+    class cmbMonth_Action implements ActionListener
+    {
+        public void actionPerformed (ActionEvent e)
+        {
+            if (cmbMonth.getSelectedItem() != null)
+            {
+                //String b = cmbMonth.getSelectedIndex().toString();
+                monthToday = cmbMonth.getSelectedIndex();
                 refreshCalendar(monthToday, yearToday);
             }
         }

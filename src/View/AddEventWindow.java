@@ -119,7 +119,7 @@ public class AddEventWindow extends JFrame implements ActionListener {
         p2.add(Box.createRigidArea(new Dimension(30, 0)));
 
         JLabel typeLabel = new JLabel("Type: ");
-        Object[] typeOptions = {"Normal", "Holiday", "Birthday"};
+        Object[] typeOptions = {"Normal", "Holiday", "Birthday", "Anniversary", "Utility Bill Payment"};
         type = new JComboBox(typeOptions);
         type.addActionListener(new ActionListener() {
             @Override
@@ -129,6 +129,12 @@ public class AddEventWindow extends JFrame implements ActionListener {
                     interval.setEnabled(false);
                 } else if (((String)type.getSelectedItem()).equals("Birthday")) {
                     interval.setSelectedIndex(Event.YEARLY_EVENT);
+                    interval.setEnabled(false);
+                } else if (((String)type.getSelectedItem()).equals("Anniversary")) {
+                    interval.setSelectedIndex(Event.YEARLY_EVENT);
+                    interval.setEnabled(false);
+                } else if (((String)type.getSelectedItem()).equals("Utility Bill Payment")) {
+                    interval.setSelectedIndex(Event.MONTHLY_EVENT);
                     interval.setEnabled(false);
                 } else {
                     interval.setSelectedIndex(Event.ONE_TIME_EVENT);
@@ -313,6 +319,10 @@ public class AddEventWindow extends JFrame implements ActionListener {
                     controller.addHoliday(getEventDate(), getEventName(), getEventColor());
                 } else if (((String) type.getSelectedItem()).equals("Birthday")) {
                     controller.addBirthday(getEventDate(), getEventName(), getEventColor());
+                } else if (((String) type.getSelectedItem()).equals("Anniversary")) {
+                    controller.addAnniversary(getEventDate(), getEventName(), getEventColor());
+                } else if (((String) type.getSelectedItem()).equals("Utility Bill Payment")) {
+                    controller.addUtilityBillPayment(getEventDate(), getEventName(), getEventColor());
                 } else {
                     controller.addEvent(getEventDate(), getEventName(), getEventColor(), getEventInterval());
                     System.out.println(getEventInterval());
