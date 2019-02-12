@@ -1,8 +1,7 @@
 package View;
 
 import Controller.*;
-import Model.Event;
-import Model.Holiday;
+import Model.*;
 
 import java.util.*;
 import javax.swing.*;
@@ -125,19 +124,19 @@ public class AddEventWindow extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (((String)type.getSelectedItem()).equals("Holiday")) {
-                    interval.setSelectedIndex(Event.YEARLY_EVENT);
+                    interval.setSelectedIndex(EventInterval.YEARLY_EVENT);
                     interval.setEnabled(false);
                 } else if (((String)type.getSelectedItem()).equals("Birthday")) {
-                    interval.setSelectedIndex(Event.YEARLY_EVENT);
+                    interval.setSelectedIndex(EventInterval.YEARLY_EVENT);
                     interval.setEnabled(false);
                 } else if (((String)type.getSelectedItem()).equals("Anniversary")) {
-                    interval.setSelectedIndex(Event.YEARLY_EVENT);
+                    interval.setSelectedIndex(EventInterval.YEARLY_EVENT);
                     interval.setEnabled(false);
                 } else if (((String)type.getSelectedItem()).equals("Utility Bill Payment")) {
-                    interval.setSelectedIndex(Event.MONTHLY_EVENT);
+                    interval.setSelectedIndex(EventInterval.MONTHLY_EVENT);
                     interval.setEnabled(false);
                 } else {
-                    interval.setSelectedIndex(Event.ONE_TIME_EVENT);
+                    interval.setSelectedIndex(EventInterval.ONE_TIME_EVENT);
                     interval.setEnabled(true);
                 }
             }
@@ -263,8 +262,8 @@ public class AddEventWindow extends JFrame implements ActionListener {
         return chooseClr.getSelectedColor();
     }
 
-    public int getEventInterval() {
-        return interval.getSelectedIndex();
+    public EventInterval getEventInterval() {
+        return EventInterval.parseInterval(interval.getSelectedIndex() + "");
     }
 
     public Calendar getEventDate() {

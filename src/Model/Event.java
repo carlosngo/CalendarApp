@@ -14,32 +14,21 @@ import java.util.Calendar;
  * @author User
  */
 public class Event implements Comparable<Event> {
-    public static final int ONE_TIME_EVENT = 0;
-    public static final int DAILY_EVENT = 1;
-    public static final int WEEKLY_EVENT = 2;
-    public static final int MONTHLY_EVENT = 3;
-    public static final int YEARLY_EVENT = 4;
-
-    public static final int HOLIDAY = 1;
-    public static final int BIRTHDAY = 2;
-    public static final int ANNIVERSARY = 3;
-    public static final int UTILITY_BILL_PAYMENT = 4;
-
     private Calendar date;
     private String name;
     private Color textColor;
     private Color backgroundColor;
-    private int interval;
+    private EventInterval interval;
 
     public Event(Calendar date, String name, Color textColor) {
         this.date = date;
         this.name = name;
         this.textColor = textColor;
-        interval = ONE_TIME_EVENT;
+        interval = new NoInterval();
         backgroundColor = Color.WHITE;
     }
 
-    public Event(Calendar date, String name, Color textColor, int interval) {
+    public Event(Calendar date, String name, Color textColor, EventInterval interval) {
         this(date, name, textColor);
         this.interval = interval;
     }
@@ -76,9 +65,9 @@ public class Event implements Comparable<Event> {
         this.backgroundColor = color;
     }
 
-    public int getInterval() { return interval; }
+    public EventInterval getInterval() { return interval; }
 
-    public void setInterval(int interval) { this.interval = interval; }
+    public void setInterval(EventInterval interval) { this.interval = interval; }
 
 
     @Override

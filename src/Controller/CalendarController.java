@@ -122,7 +122,7 @@ public class CalendarController {
     public TreeSet<Event> getEvents(Calendar d) {
         TreeSet<Event> set = new TreeSet<>();
         for (Event e : events) {
-            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
+            if (e.getInterval().repeatsAtDate(e.getDate(), d))
                 set.add(e);
         }
         return set;
@@ -131,7 +131,7 @@ public class CalendarController {
     public ArrayList<String> getEventNames(Calendar d) {
         ArrayList<String> names = new ArrayList<>();
         for (Event e : events) {
-            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
+            if (e.getInterval().repeatsAtDate(e.getDate(), d))
                 names.add(e.getName());
         }
         return names;
@@ -140,7 +140,7 @@ public class CalendarController {
     public ArrayList<Color> getEventTextColors(Calendar d) {
         ArrayList<Color> colors = new ArrayList<>();
         for (Event e : events) {
-            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
+            if (e.getInterval().repeatsAtDate(e.getDate(), d))
                 colors.add(e.getTextColor());
         }
         return colors;
@@ -149,22 +149,13 @@ public class CalendarController {
     public ArrayList<Color> getEventBackgroundColors(Calendar d) {
         ArrayList<Color> colors = new ArrayList<>();
         for (Event e : events) {
-            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
+            if (e.getInterval().repeatsAtDate(e.getDate(), d))
                 colors.add(e.getBackgroundColor());
         }
         return colors;
     }
 
-    public ArrayList<Integer> getEventIntervals (Calendar d) {
-        ArrayList<Integer> intervals = new ArrayList<>();
-        for (Event e : events) {
-            if (repeatsAtDate(e.getDate(), e.getInterval(), d))
-                intervals.add(e.getInterval());
-        }
-        return intervals;
-    }
-
-    public void addEvent(Calendar d, String name, Color color, int interval) {
+    public void addEvent(Calendar d, String name, Color color, EventInterval interval) {
         events.add(new Event(d, name, color, interval));
         cv.refreshCalendar(cv.monthToday, cv.yearToday);
         no.update();
@@ -198,7 +189,7 @@ public class CalendarController {
 
         for (int i = 0; i < events.size(); i++) {
             Event e = events.get(i);
-            if (repeatsAtDate(e.getDate(), e.getInterval(), d) && e.getName().equals(name) &&
+            if (e.getInterval().repeatsAtDate(e.getDate(), d) && e.getName().equals(name) &&
                     e.getTextColor().getRGB() == c.getRGB()) events.remove(i);
         }
 
@@ -213,24 +204,6 @@ public class CalendarController {
     public void closeAddEventWindow() {
         aev.dispose();
         aev = null;
-    }
-
-    private boolean repeatsAtDate(Calendar startDate, int interval, Calendar query) {
-        if (startDate.compareTo(query) > 0) return false;
-        switch (interval) {
-            case Event.ONE_TIME_EVENT:
-                return startDate.compareTo(query) == 0;
-            case Event.DAILY_EVENT:
-                return startDate.compareTo(query) <= 0;
-            case Event.WEEKLY_EVENT:
-                return startDate.get(Calendar.DAY_OF_WEEK) == query.get(Calendar.DAY_OF_WEEK);
-            case Event.MONTHLY_EVENT:
-                return startDate.get(Calendar.DAY_OF_MONTH) == query.get(Calendar.DAY_OF_MONTH);
-            case Event.YEARLY_EVENT:
-                return startDate.get(Calendar.MONTH) == query.get(Calendar.MONTH) &&
-                        startDate.get(Calendar.DAY_OF_MONTH) == query.get(Calendar.DAY_OF_MONTH);
-        }
-        return false;
     }
 
     public boolean isViewDateWindowOpen() { return dv != null; }

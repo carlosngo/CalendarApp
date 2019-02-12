@@ -46,8 +46,7 @@ public class CSVReader implements FileStrategy {
                     } else if (backClrRGB == UtilityBillPayment.COLOR_CODE.getRGB()) {
                         e = new UtilityBillPayment(c, name, textColor);
                     } else {
-                        int interval = Integer.parseInt(fields[4].trim());
-                        e = new Event(c, name, textColor, interval);
+                        e = new Event(c, name, textColor, EventInterval.parseInterval(fields[4].trim()));
                     }
                 } else {
                     e = new Event(c, name, textColor);
